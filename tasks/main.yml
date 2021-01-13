@@ -60,7 +60,7 @@
 # create jacktrip server folder
 - name: Create jacktrip server directory
   file:
-    path: "{{ jacktrip_folder }}/jacktrip-{{ jacktrip_release_version }}/bin"
+    path: "{{ jacktrip_folder }}/{{ jacktrip_product_name }}-{{ jacktrip_release_version }}/bin"
     state: directory
     owner: "{{ jacktrip_username }}"
     group: "{{ jacktrip_username }}"
@@ -71,7 +71,7 @@
 - name: checkout jacktrip version from github
   git:
     repo: 'https://github.com/jacktrip/jacktrip/'
-    dest: "{{ jacktrip_folder }}/jacktrip-git"
+    dest: "{{ jacktrip_folder }}/{{ jacktrip_git_folder }}"
     version: "{{ jacktrip_release_version }}"
   become: true
 
@@ -89,40 +89,28 @@
 - name: "[BUILD] ./build"
   command: ./build
   args:
-    chdir: "{{ jacktrip_folder }}/jacktrip-git/src/"
-    # removes: "{{ jacktrip_folder }}/jacktrip-git/src"
+    chdir: "{{ jacktrip_folder }}/{{ jacktrip_git_folder }}/{{ jacktrip_source_folder }}"
+    # removes: "{{ jacktrip_folder }}/{{ jacktrip_git_folder }}/{{ jacktrip_source_folder }}"
   when: jacktrip_build
   changed_when: false
   become: true
 
 - name: "copy executable to versioned binary folder"
   copy:
-    src: "{{ jacktrip_folder }}/ninjam-git/ninjam/server/ninjamsrv"
-    dest: "{{ jacktrip_folder }}/ninjam-{{ jacktrip_release_version }}/bin/ninjamsrv"
+    src: "{{ jacktrip_folder }}/{{ jacktrip_git_folder }}/src/jacktrip"
+    dest: "{{ jacktrip_folder }}/{{ jacktrip_product_name}}-{{ jacktrip_release_version }}/bin/jacktrip"
     remote_src: true
     owner: "{{ jacktrip_username }}"
     group: "{{ jacktrip_username }}"
     mode: 0755
   notify:
-    - restart ninjam server
+    - restart jacktrip server
   when: jacktrip_build
   changed_when: false
   become: true
 
-# added ninjam server config file
-- name: create ninjam-server config file
-  template:
-    src: ninjamserver.cfg.j2
-    dest: "{{ jacktrip_folder }}/ninjam-{{ jacktrip_release_version }}/bin/ninjamserver.cfg"
-    owner: "{{ jacktrip_username }}"
-    group: "{{ jacktrip_username }}"
-    mode: 0644
-  notify:
-    - restart ninjam server
-  become: true
-
 # added service script
-- name: create ninjam-server template
+- name: create jacktrip-server template
   template:
     src: jacktrip-server.service.j2
     dest: "/etc/systemd/system/{{ jacktrip_service }}.service"
@@ -130,5 +118,5 @@
     group: "root"
     mode: 0644
   notify:
-    - restart ninjam server
+    - restart jacktrip server
   become: true

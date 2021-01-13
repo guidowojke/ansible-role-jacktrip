@@ -12,3 +12,7 @@ jacktrip_serverinfo: "yourdomain.com({{ jacktrip_release_version }});YourCity,Yo
 jacktrip_centralserver: "localhost"
 jacktrip_numchannels: "10"
 jacktrip_service: "jacktrip-server"
+jacktrip_source_folder: "src"
+jacktrip_executable_path: "{{ jacktrip_source_folder }}/jacktrip"
+jacktrip_git_folder: "{{ jacktrip_username }}-git"
+jacktrip_product_name: "{{ jacktrip_username }}"
