@@ -1,0 +1,14 @@
+---
+jacktrip_version: "1.2.2"
+jacktrip_port: "4464"
+jacktrip_build: true
+jacktrip_timezone: "America/Los_Angeles"
+jacktrip_release_version: "v1.2.2"
+jacktrip_username: "jacktrip"
+jacktrip_folder: "/opt/{{ jacktrip_username }}"
+jacktrip_log_folder: "/var/log/{{ jacktrip_username }}/"
+jacktrip_welcomemessage: "Welcome to the Jacktrip Server ({{ jacktrip_release_version }})"
+jacktrip_serverinfo: "yourdomain.com({{ jacktrip_release_version }});YourCity,YourCountry;CountryCode"
+jacktrip_centralserver: "localhost"
+jacktrip_numchannels: "10"
+jacktrip_service: "jacktrip-server"

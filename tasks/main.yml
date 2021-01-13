@@ -1,0 +1,134 @@
+---
+# Install packages needed by jacktrip
+- name: Install the list of packages for jacktrip
+  apt:
+    autoclean: true
+    autoremove: true
+    state: present
+    pkg:
+      - git  # to checkout the project from github
+      - build-essential
+      - librtaudio-dev
+      - qt5-default
+      - autoconf
+      - automake
+      - libtool
+      - make
+      - libjack-jackd2-dev
+      - qjackctl
+      - audacity
+  become: true
+
+# Add jacktrip group
+- name: "Ensure group {{ jacktrip_username }} exists"
+  group:
+    name: "{{ jacktrip_username }}"
+    state: present
+  become: true
+
+# Add jacktrip user
+- name: "Add the user {{ jacktrip_username }}"
+  user:
+    name: "{{ jacktrip_username }}"
+    comment: JacktripServer
+    group: "{{ jacktrip_username }}"
+    system: true
+    create_home: false
+    shell: /sbin/nologin
+  become: true
+
+# create jacktrip log folder
+- name: create jacktrip log directory
+  file:
+    path: "{{ jacktrip_log_folder }}"
+    state: directory
+    owner: "{{ jacktrip_username }}"
+    group: "{{ jacktrip_username }}"
+    mode: '0755'
+  become: true
+
+# create jaktrip opt folder with correct owner
+- name: create jacktrip opt directory
+  file:
+    path: "{{ jacktrip_folder }}"
+    state: directory
+    owner: "{{ jacktrip_username }}"
+    group: "{{ jacktrip_username }}"
+    mode: '0755'
+  become: true
+
+# create jacktrip server folder
+- name: Create jacktrip server directory
+  file:
+    path: "{{ jacktrip_folder }}/jacktrip-{{ jacktrip_release_version }}/bin"
+    state: directory
+    owner: "{{ jacktrip_username }}"
+    group: "{{ jacktrip_username }}"
+    mode: '0755'
+  become: true
+
+# sources from jacktrip
+- name: checkout jacktrip version from github
+  git:
+    repo: 'https://github.com/jacktrip/jacktrip/'
+    dest: "{{ jacktrip_folder }}/jacktrip-git"
+    version: "{{ jacktrip_release_version }}"
+  become: true
+
+# stop server
+#- name: stop jacktrip service before building jacktrip
+#  systemd:
+#    name: "{{ jacktrip_service }}"
+#    state: stopped
+#  when: jacktrip_build
+#  ignore_errors: true  # if service is not present
+#  become: true
+
+# all build commands
+# make clean
+- name: "[BUILD] ./build"
+  command: ./build
+  args:
+    chdir: "{{ jacktrip_folder }}/jacktrip-git/src/"
+    # removes: "{{ jacktrip_folder }}/jacktrip-git/src"
+  when: jacktrip_build
+  changed_when: false
+  become: true
+
+- name: "copy executable to versioned binary folder"
+  copy:
+    src: "{{ jacktrip_folder }}/ninjam-git/ninjam/server/ninjamsrv"
+    dest: "{{ jacktrip_folder }}/ninjam-{{ jacktrip_release_version }}/bin/ninjamsrv"
+    remote_src: true
+    owner: "{{ jacktrip_username }}"
+    group: "{{ jacktrip_username }}"
+    mode: 0755
+  notify:
+    - restart ninjam server
+  when: jacktrip_build
+  changed_when: false
+  become: true
+
+# added ninjam server config file
+- name: create ninjam-server config file
+  template:
+    src: ninjamserver.cfg.j2
+    dest: "{{ jacktrip_folder }}/ninjam-{{ jacktrip_release_version }}/bin/ninjamserver.cfg"
+    owner: "{{ jacktrip_username }}"
+    group: "{{ jacktrip_username }}"
+    mode: 0644
+  notify:
+    - restart ninjam server
+  become: true
+
+# added service script
+- name: create ninjam-server template
+  template:
+    src: jacktrip-server.service.j2
+    dest: "/etc/systemd/system/{{ jacktrip_service }}.service"
+    owner: "root"
+    group: "root"
+    mode: 0644
+  notify:
+    - restart ninjam server
+  become: true

@@ -1,0 +1,26 @@
+[Unit]
+Description=Jacktrip-Server
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=10
+User={{ jacktrip_username }}
+Group={{ jacktrip_username }}
+NoNewPrivileges=true
+ProtectSystem=true
+ProtectHome=true
+Nice=-20
+IOSchedulingClass=realtime
+IOSchedulingPriority=0
+
+ExecStart=/bin/bash -c '{{ jacktrip_folder }}/jacktrip-{{ jacktrip_release_version }}/bin/jacktrip -s '
+
+StandardOutput=journal
+StandardError=inherit
+SyslogIdentifier=jacktrip
+
+[Install]
+WantedBy=multi-user.target
