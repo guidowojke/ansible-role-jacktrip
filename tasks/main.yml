@@ -76,7 +76,7 @@
   become: true
 
 # stop server
-#- name: stop jacktrip service before building jacktrip
+# - name: stop jacktrip service before building jacktrip
 #  systemd:
 #    name: "{{ jacktrip_service }}"
 #    state: stopped
@@ -90,7 +90,7 @@
   command: ./build
   args:
     chdir: "{{ jacktrip_folder }}/{{ jacktrip_git_folder }}/{{ jacktrip_source_folder }}"
-    # removes: "{{ jacktrip_folder }}/{{ jacktrip_git_folder }}/{{ jacktrip_source_folder }}"
+    creates: "{{ jacktrip_folder }}/{{ jacktrip_git_folder }}/{{ jacktrip_executable_path }}"
   when: jacktrip_build
   changed_when: false
   become: true
