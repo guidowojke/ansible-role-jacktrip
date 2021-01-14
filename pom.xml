@@ -3,7 +3,7 @@
 
     <groupId>de.guidowojke.ansible.roles.jacktrip</groupId>
     <artifactId>ansible-role-jacktrip</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
 
     <scm>
         <url>https://github.com/guidowojke/ansible-role-jacktrip</url>
