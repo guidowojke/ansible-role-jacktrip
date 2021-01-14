@@ -16,7 +16,7 @@ Nice=-20
 IOSchedulingClass=realtime
 IOSchedulingPriority=0
 
-ExecStart=/bin/bash -c '{{ jacktrip_folder }}/{{ jacktrip_product_name }}-{{ jacktrip_release_version }}/bin/{{ jacktrip_executable_name }} -s '
+ExecStart=/bin/bash -c '{{ jacktrip_folder }}/{{ jacktrip_product_name }}-{{ jacktrip_release_version }}/bin/{{ jacktrip_executable_name }} --jacktripserver --numchannels {{ jacktrip_numchannels }}  '
 
 StandardOutput=journal
 StandardError=inherit
