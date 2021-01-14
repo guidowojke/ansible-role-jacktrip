@@ -34,7 +34,8 @@ jobs:
           release_name: Release ${{ github.ref }}
           body: |
             Changes in this Release
-            - first version to install a jacktrip server
+            - first final version to install a jacktrip server
+            - fixed linting errors
           draft: false
           prerelease: false
 
