@@ -98,7 +98,7 @@
 - name: "copy executable to versioned binary folder"
   copy:
     src: "{{ jacktrip_folder }}/{{ jacktrip_git_folder }}/{{ jacktrip_executable_path }}"
-    dest: "{{ jacktrip_folder }}/{{ jacktrip_product_name}}-{{ jacktrip_release_version }}/bin/{{ jacktrip_executable_name }}"
+    dest: "{{ jacktrip_folder }}/{{ jacktrip_product_name }}-{{ jacktrip_release_version }}/bin/{{ jacktrip_executable_name }}"
     remote_src: true
     owner: "{{ jacktrip_username }}"
     group: "{{ jacktrip_username }}"
